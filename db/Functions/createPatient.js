@@ -1,12 +1,9 @@
-const User = require('../models/user');
 const Patient = require('../models/patient');
 
 //crear paciente.
 const createPatient = async(data) => {
     try{
-        const user = new User(data.user);
-        await user.save();
-        const patient = new Patient({ ...data, user:user._id});
+        const patient = new Patient({data});
         await patient.save();
         return patient;
     }catch(error){

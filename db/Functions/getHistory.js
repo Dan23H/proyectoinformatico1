@@ -1,9 +1,7 @@
 const Ultrasound = require('../models/ultrasounds');
-const Doctor = require('../models/doctor');
-const Patient = require('../models/patient');
 
 //ver el historial de ultrasonidos de los paicientes
-const getUltrasound = async (patientId) => {
+const getUltrasoundHistory = async (patientId) => {
     try{
         const ultrasound = await Ultrasound.find({patient: patientId}
             .populate('doctor')
@@ -15,4 +13,4 @@ const getUltrasound = async (patientId) => {
     }
 }
 
-module.exports = getUltrasound;
+module.exports = getUltrasoundHistory;

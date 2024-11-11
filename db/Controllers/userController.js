@@ -2,7 +2,6 @@ const createPatient = require ('../Functions/createPatient');
 const createDoctor = require ('../Functions/createDoctor');
 const getLoginInfo = require ('../Functions/LoginQuery');
 const getPatients =require ('../Functions/getPatients');
-const User = require ('../models/user');
 
 const newPatient = async (req,res) => {
     try{
