@@ -14,4 +14,4 @@ const createPatient = async(data) => {
     }
 };
 
-module.exports = {createPatient};
+module.exports = createPatient;

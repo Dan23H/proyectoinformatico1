@@ -9,4 +9,4 @@ const loginQuery = async(email) => {
         console.log('Error al traer la informacion:' + error);
     }
 }
-module.exports = {loginQuery};
+module.exports = loginQuery;

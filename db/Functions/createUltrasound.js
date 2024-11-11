@@ -10,4 +10,4 @@ const createUltrasound = async(data) => {
         console.log('Error al crear el ultrasonido:' + error); 
     }
 }
-module.exports = {createUltrasound};
+module.exports = createUltrasound;

@@ -9,4 +9,4 @@ const getPatients = async () => {
         console.log('Error al obtener todos los pacientes:' + error)
     }
 }
-module.exports = {getPatients}
+module.exports = getPatients;

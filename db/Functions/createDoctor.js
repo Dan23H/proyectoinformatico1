@@ -14,4 +14,4 @@ const createDoctor = async(data) => {
     }
 }  
 
-module.exports = {createDoctor};
+module.exports = createDoctor;

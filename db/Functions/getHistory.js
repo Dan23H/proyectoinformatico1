@@ -15,4 +15,4 @@ const getUltrasound = async (patientId) => {
     }
 }
 
-module.exports = {getUltrasound};
+module.exports = getUltrasound;
