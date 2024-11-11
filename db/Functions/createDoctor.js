@@ -3,7 +3,7 @@ const Doctor = require('../models/doctor');
 //crear medico.
 const createDoctor = async(data) => {
     try{
-        const doctor = new Doctor({data});
+        const doctor = new Doctor(data);
         await doctor.save();
         return doctor;
     }catch(error){

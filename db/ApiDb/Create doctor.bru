@@ -1,0 +1,19 @@
+meta {
+  name: Create doctor
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:3000/api/create-doctor
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "horacio",
+    "email": "horacio@example.com",
+    "password": "qwerty1"
+  }
+}

@@ -6,6 +6,6 @@ const ultrasoundController = require('../Controllers/ultrasoundController');
 router.post('/create-ultrasound', ultrasoundController.createUltrasound);
 
 //ver historial de ecografias
-router.get('/patient/patient-history', ultrasoundController.ultrasoundHistory)
+router.get('/ultrasound-history/:patientId', ultrasoundController.ultrasoundHistory)
 
 module.exports = router;

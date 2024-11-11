@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const userController = require ('../Controllers/userController');
+const {newPatient,newDoctor,userInfo,showPatients} = require ('../Controllers/userController');
 
 //crear paciente
-router.post('/create-patient', userController.newPatient);
+router.post('/create-patient', newPatient);
 
 //crear un doctor
-router.post('/create-doctor', userController.newDoctor);
+router.post('/create-doctor', newDoctor);
 
 //informacion de login
-router.post ('/login', userController.userInfo);
+router.post ('/login', userInfo);
 
 //llamar a todos los pacientes
-router.get('/patients',userController.showPatients);
+router.get('/patients', showPatients);
 
 module.exports = router;

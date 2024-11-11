@@ -1,0 +1,20 @@
+meta {
+  name: Create ultrasound
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:3000/api/create-ultrasound
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "patient":"6732852538c7912797136a7a",
+    "doctor": "6732852a38c7912797136a7c",
+    "videoUrl": "http://videoejemplo.com/video.mp4",
+    "description": "segunda prueba"
+  }
+}

@@ -3,19 +3,19 @@ const createDoctor = require ('../Functions/createDoctor');
 const getLoginInfo = require ('../Functions/LoginQuery');
 const getPatients =require ('../Functions/getPatients');
 
-const newPatient = async (req,res) => {
+const newPatient = async (req, res) => {
     try{
         const patient = await createPatient(req.body);
-        return res.status(201).json(patient);
+        return res.status(201).json({success: true, data: patient});
     } catch(error){
         return res.status(500).json({error: error.message});
     }
 }
 
-const newDoctor = async (req,res) => {
+const newDoctor = async (req, res) => {
     try{
         const doctor = await createDoctor(req.body);
-        return res.status(201).json(doctor);
+        return res.status(201).json({success: true , data: doctor});
     } catch(error){
         return res.status(500).json({error: error.message});
     }

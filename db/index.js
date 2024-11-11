@@ -17,12 +17,15 @@ connectDB();
 app.use(express.json());
 
 //rutas
-app.use('/api/users', userRoutes);
-app.use('/api/ultrasounds', ultrasoundRoutes);
+app.use('/api', userRoutes);
+app.use('/api', ultrasoundRoutes);
 
 //manejo de errores
 app.use(errorHandler);
 app.use(notFound);
 
+
 //Inicializacion del servidor
 app.listen(PORT, () => console.log (`Servidor corriendo en el puerto ${PORT}`))
+
+module.exports = app;
