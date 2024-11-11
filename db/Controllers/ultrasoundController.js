@@ -1,7 +1,7 @@
 const newUltrasound = require ('../Functions/createUltrasound');
 const viewHistory = require('../Functions/getHistory');
 
-const getUltrasound = async (req, res) => {
+const createUltrasound = async (req, res) => {
     try{
         const ultrasound = await newUltrasound(req.body);
         return res.status(200).json(ultrasound);
@@ -21,4 +21,4 @@ const ultrasoundHistory = async (req,res) => {
     }
 }
 
-module.exports = {getUltrasound, ultrasoundHistory};
+module.exports = {createUltrasound, ultrasoundHistory};

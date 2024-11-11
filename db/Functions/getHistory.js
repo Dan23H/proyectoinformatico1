@@ -6,8 +6,8 @@ const Patient = require('../models/patient');
 const getUltrasound = async (patientId) => {
     try{
         const ultrasound = await Ultrasound.find({patient: patientId}
-            .populate('doctor', 'name')
-            .populate('patient','name')
+            .populate('doctor')
+            .populate('patient')
         )
         return ultrasound
     }catch(error){
