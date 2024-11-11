@@ -1,5 +1,6 @@
 const newUltrasound = require ('../Functions/createUltrasound');
 const viewHistory = require('../Functions/getHistory');
+const viewUltrasound = require('../Functions/viewUltrasound');
 const Patient = require('../models/patient')
 
 const createUltrasound = async (req, res) => {
@@ -27,4 +28,18 @@ const ultrasoundHistory = async (req, res) => {
     }
 }
 
-module.exports = {createUltrasound, ultrasoundHistory};
+const ultrasoundInfo = async(req,res) => {
+    const {ultrasoundId} = req.params;
+    try {
+        const ultrasound = await viewUltrasound(ultrasoundId);
+        if (ultrasound) {
+            return res.status(200).json({ success: true, data: ultrasound });
+        } else {
+            return res.status(404).json({ success: false, message: 'Ecografía no encontrada' });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+module.exports = {createUltrasound, ultrasoundHistory, ultrasoundInfo};
