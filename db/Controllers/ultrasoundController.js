@@ -1,11 +1,13 @@
 const newUltrasound = require ('../Functions/createUltrasound');
 const viewHistory = require('../Functions/getHistory');
 const viewUltrasound = require('../Functions/viewUltrasound');
-const Patient = require('../models/patient')
+const Patient = require('../models/patient');
+const { connectAz } = require('../config');
 
 const createUltrasound = async (req, res) => {
     try{
         const ultrasound = await newUltrasound(req.body);
+        const upload = 
         const patient = await Patient.findById(req.body.patient).populate('ultrasoundHistory');
         return res.status(201).json({success: true, data: ultrasound, patient: patient});
     } catch(error){

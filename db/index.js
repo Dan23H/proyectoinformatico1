@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const connectDB = require('./config');
+const {connectDB} = require('./config');
 const userRoutes = require('./routes/userRoutes');
 const ultrasoundRoutes = require('./routes/ultrasoundRoutes');
 const errorHandler = require('./middlewares/errorHandler');

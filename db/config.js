@@ -1,4 +1,5 @@
 const moongose = require('mongoose');
+const { BlobServiceClient } = require("@azure/storage-blob"); 
 
 const connectDB = async() => {
     try{
@@ -9,4 +10,20 @@ const connectDB = async() => {
         throw new Error('error al conectar en la database')
     }
 };
-module.exports = connectDB;
+
+let blobServiceClient; // Cache client instance
+
+const connectAz = async () => {
+    if (!blobServiceClient) { // Initialize only if not already initialized
+        try {
+            blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZ_CONN);
+            console.log("Connected to Azure Blob Storage");
+        } catch (error) {
+            console.error("Failed to connect to Azure Blob Storage:", error.message);
+            throw new Error("Error connecting to Azure Blob Storage");
+        }
+    }
+    return blobServiceClient; // Return the cached client instance
+};
+
+module.exports = {connectAz, connectDB};
