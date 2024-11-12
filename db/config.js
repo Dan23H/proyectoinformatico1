@@ -11,10 +11,10 @@ const connectDB = async() => {
     }
 };
 
-let blobServiceClient; // Cache client instance
+let blobServiceClient; 
 
 const connectAz = async () => {
-    if (!blobServiceClient) { // Initialize only if not already initialized
+    if (!blobServiceClient) { 
         try {
             blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZ_CONN);
             console.log("Connected to Azure Blob Storage");
@@ -23,7 +23,7 @@ const connectAz = async () => {
             throw new Error("Error connecting to Azure Blob Storage");
         }
     }
-    return blobServiceClient; // Return the cached client instance
+    return blobServiceClient;
 };
 
 module.exports = {connectAz, connectDB};

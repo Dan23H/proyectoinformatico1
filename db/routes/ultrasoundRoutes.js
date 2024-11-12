@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const ultrasoundController = require('../Controllers/ultrasoundController');
-
 //crear ecografia
 router.post('/create-ultrasound', ultrasoundController.createUltrasound);
 
