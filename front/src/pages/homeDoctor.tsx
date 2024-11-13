@@ -1,17 +1,23 @@
-import React from 'react';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-const HomeDoctor: React.FC = () => {
+const HomeDoctor = () => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`)
+      .then((res) => res.json())
+      .then(setData)
+      .catch((err) => console.error('Failed to load data:', err));
+  }, []);
+
   return (
     <div>
-      <h1>Panel del Doctor</h1>
-      <Link href="/conversorMsg">
-        <button>Añadir Nuevo Paciente</button>
-      </Link>
-      <Link href="/busquedaPacientes">
-        <button>Buscar Paciente</button>
-      </Link>
-      <p>*El médico no puede ver los videos, solo el recuento de los enviados.</p>
+      <h1>Doctor's Home</h1>
+      {data ? (
+        <p>{JSON.stringify(data)}</p>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 };

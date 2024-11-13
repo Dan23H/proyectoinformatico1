@@ -1,27 +1,35 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { convertVideo } from '../utils/convertVideo';
 
-const FileConverter: React.FC = () => {
+const FileConverter = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [convertedFile, setConvertedFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    setFile(selectedFile);
   };
 
-  const convertFile = () => {
-    // Aquí se integrará la lógica de conversión de archivos
-    
+  const handleConvert = async () => {
+    if (!file) {
+      setError('Please select a file');
+      return;
+    }
+
+    setError(null);
+    try {
+      await convertVideo(file);
+      alert('Video converted and downloaded successfully');
+    } catch (err) {
+      setError('Failed to convert video');
+    }
   };
 
   return (
     <div>
-      <input type="file" onChange={handleFileUpload} />
-      <button onClick={convertFile} disabled={!file}>
-        Convertir Archivo
-      </button>
-      {convertedFile && <p>Archivo convertido listo para enviar</p>}
+      <input type="file" onChange={handleFileChange} />
+      <button onClick={handleConvert}>Convert Video</button>
+      {error && <p>{error}</p>}
     </div>
   );
 };
