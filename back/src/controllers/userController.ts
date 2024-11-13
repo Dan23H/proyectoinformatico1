@@ -39,6 +39,26 @@ export const getPatients = async (req: Request, res: Response): Promise<any> => 
 
 };
 
+export const createDoc = async (req: Request, res: Response): Promise<any> => {
+  const {nombre,email,pass,id} = req.body;
+  try {
+
+    const response = await axios.post('http://localhost:3000/api/create-patient', {
+      name:nombre,
+      email:email,
+      password: pass,
+      identification:id
+  });
+
+    return res.status(200).json(response.data);
+
+  } catch (error) {
+    console.error('Error creando el medico: ', error);
+    return res.status(500).json({ error: 'Fallo la creacion del medico' });
+  }
+
+};
+
 export const createConsulta = async (req: Request, res: Response): Promise<any> =>{
   const { email,patientId, doctorId, description } = req.body;
   const videoFile = req.file; // Access the uploaded AVI video file from the request
@@ -104,7 +124,8 @@ export const createPatientWithUltrasound = async (req: Request, res: Response): 
       const createPatientResponse = await axios.post('http://localhost:3000/api/create-patient', {
           name:name,
           email:email,
-          password: cedula
+          password: cedula,
+          identification:cedula
       });
       const patientId = createPatientResponse.data.data._id;
       if (!patientId) {

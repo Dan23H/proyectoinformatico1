@@ -1,6 +1,6 @@
 import express from 'express';
 import loginController from '../controllers/loginController';
-import { getUltrasoundHistory, getPatients, createPatientWithUltrasound, createConsulta } from '../controllers/userController';
+import { getUltrasoundHistory, getPatients, createPatientWithUltrasound, createConsulta, createDoc } from '../controllers/userController';
 import { uploadMiddleware } from '../utils/videoConverter';
 
 const router = express.Router();
@@ -29,7 +29,7 @@ router.post('/crear-consulta',
 )
 
 router.get('/crear-medico',
-
+     createDoc
 );
 
 export default router;
