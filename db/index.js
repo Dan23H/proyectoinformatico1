@@ -9,7 +9,7 @@ const notFound = require('./middlewares/notFound');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 9000;
 
 //conectar a la database
 connectDB();
