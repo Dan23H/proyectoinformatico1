@@ -4,6 +4,11 @@ import fs from 'fs';
 import FormData from 'form-data';
 import { convertVideo } from '../utils/videoConverter';
 import { sendEmail } from '../utils/emailSender';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const PORT = process.env.PORT || 5000;
 
 // Controller to get ultrasound history
 export const getUltrasoundHistory = async (req: Request, res: Response): Promise<any> => {
@@ -15,26 +20,26 @@ export const getUltrasoundHistory = async (req: Request, res: Response): Promise
 
   try {
     // Send request to the ultrasound history API
-    const response = await axios.get(`http://localhost:3000/api/ultrasound-history/${patientId}`);
+    const response = await axios.get(`http://localhost:${PORT}/api/ultrasound-history/${patientId}`);
 
     // Return the data from the API
     return res.status(200).json(response.data);
   } catch (error) {
-    console.error('Error fetching ultrasound history:', error);
-    return res.status(500).json({ error: 'Failed to fetch ultrasound history' });
+    console.error(`Error fetching ultrasound history:`, error);
+    return res.status(500).json({ error: `Failed to fetch ultrasound history` });
   }
 };
 
 export const getPatients = async (req: Request, res: Response): Promise<any> => {
   try {
 
-    const response = await axios.get('http://localhost:3000/api/patients');
+    const response = await axios.get(`http://localhost:${PORT}/api/patients`);
 
     return res.status(200).json(response.data);
 
   } catch (error) {
-    console.error('Error fetching patiets:', error);
-    return res.status(500).json({ error: 'Failed to fetch patients' });
+    console.error(`Error fetching patiets:`, error);
+    return res.status(500).json({ error: `Failed to fetch patients` });
   }
 
 };
@@ -43,7 +48,7 @@ export const createDoc = async (req: Request, res: Response): Promise<any> => {
   const {nombre,email,pass,id} = req.body;
   try {
 
-    const response = await axios.post('http://localhost:3000/api/create-patient', {
+    const response = await axios.post(`http://localhost:${PORT}/api/create-patient`, {
       name:nombre,
       email:email,
       password: pass,
@@ -53,8 +58,8 @@ export const createDoc = async (req: Request, res: Response): Promise<any> => {
     return res.status(200).json(response.data);
 
   } catch (error) {
-    console.error('Error creando el medico: ', error);
-    return res.status(500).json({ error: 'Fallo la creacion del medico' });
+    console.error(`Error creando el medico: `, error);
+    return res.status(500).json({ error: `Fallo la creacion del medico` });
   }
 
 };
@@ -65,7 +70,7 @@ export const createConsulta = async (req: Request, res: Response): Promise<any> 
   const subject = "Video Ecografía4D";
 
   if (!videoFile) {
-      return res.status(400).json({ error: 'No video file provided' });
+      return res.status(400).json({ error: `No video file provided` });
   }
 
   try {
@@ -75,12 +80,12 @@ export const createConsulta = async (req: Request, res: Response): Promise<any> 
 
       // Step 2: Upload MP4 video as ultrasound
       const formData = new FormData();
-      formData.append('file', fs.createReadStream(mp4FilePath));
-      formData.append('patient', patientId);
-      formData.append('doctor', doctorId);
-      formData.append('description', description);
+      formData.append(`file`, fs.createReadStream(mp4FilePath));
+      formData.append(`patient`, patientId);
+      formData.append(`doctor`, doctorId);
+      formData.append(`description`, description);
 
-      const createUltrasoundResponse = await axios.post('http://localhost:3000/api/create-ultrasound', formData, {
+      const createUltrasoundResponse = await axios.post(`http://localhost:${PORT}/api/create-ultrasound`, formData, {
           headers: formData.getHeaders(),
       });
 
@@ -104,8 +109,8 @@ export const createConsulta = async (req: Request, res: Response): Promise<any> 
       });
 
   } catch (error) {
-      console.error('Error creating patient or ultrasound:', error);
-      return res.status(500).json({ error: 'An error occurred while creating patient or ultrasound.' });
+      console.error(`Error creating patient or ultrasound:`, error);
+      return res.status(500).json({ error: `An error occurred while creating patient or ultrasound.` });
   }
 };
 
@@ -115,13 +120,13 @@ export const createPatientWithUltrasound = async (req: Request, res: Response): 
   const subject = "Video Ecografía4D";
 
   if (!videoFile) {
-      return res.status(400).json({ error: 'No video file provided' });
+      return res.status(400).json({ error: `No video file provided` });
   }
 
   try {
       // Step 1: Create patient
 
-      const createPatientResponse = await axios.post('http://localhost:3000/api/create-patient', {
+      const createPatientResponse = await axios.post(`http://localhost:${PORT}/api/create-patient`, {
           name:name,
           email:email,
           password: cedula,
@@ -129,7 +134,7 @@ export const createPatientWithUltrasound = async (req: Request, res: Response): 
       });
       const patientId = createPatientResponse.data.data._id;
       if (!patientId) {
-          return res.status(500).json({ error: 'Failed to create patient.' });
+          return res.status(500).json({ error: `Failed to create patient.` });
       }
 
       // Step 2: Convert AVI video to MP4
@@ -137,12 +142,12 @@ export const createPatientWithUltrasound = async (req: Request, res: Response): 
 
       // Step 3: Upload MP4 video as ultrasound
       const formData = new FormData();
-      formData.append('file', fs.createReadStream(mp4FilePath));
-      formData.append('patient', patientId);
-      formData.append('doctor', doctorId);
-      formData.append('description', description);
+      formData.append(`file`, fs.createReadStream(mp4FilePath));
+      formData.append(`patient`, patientId);
+      formData.append(`doctor`, doctorId);
+      formData.append(`description`, description);
 
-      const createUltrasoundResponse = await axios.post('http://localhost:3000/api/create-ultrasound', formData, {
+      const createUltrasoundResponse = await axios.post(`http://localhost:${PORT}/api/create-ultrasound`, formData, {
           headers: formData.getHeaders(),
       });
 
@@ -163,7 +168,7 @@ export const createPatientWithUltrasound = async (req: Request, res: Response): 
       });
 
   } catch (error) {
-      console.error('Error creating patient or ultrasound:', error);
-      return res.status(500).json({ error: 'An error occurred while creating patient or ultrasound.' });
+      console.error(`Error creating patient or ultrasound:`, error);
+      return res.status(500).json({ error: `An error occurred while creating patient or ultrasound.` });
   }
 };
