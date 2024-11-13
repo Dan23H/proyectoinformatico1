@@ -8,7 +8,7 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     // Se llama al backend para autenticar
-    router.push('/homeDoctor'); // Redirigir después del login
+    router.push('/homeDoctor');
   };
 
   return (
