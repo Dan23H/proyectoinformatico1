@@ -1,0 +1,15 @@
+meta {
+  name: Ultrasound history
+  type: http
+  seq: 7
+}
+
+get {
+  url: http://localhost:3000/api/ultrasound-history/:patientId
+  body: json
+  auth: none
+}
+
+params:path {
+  patientId: 67327c2f3343090bff41ff7b
+}
