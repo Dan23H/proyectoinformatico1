@@ -1,0 +1,20 @@
+meta {
+  name: crearConsulta
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:5000/api/crear-consulta
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  name: Daniel
+  email: daniel411@ex.com
+  cedula: 12345678
+  doctorId: 6734c73761b3dc0ca202d1e6
+  description: Prueba 1
+  video: @file(C:\Users\saimo\Escritorio\UNI\Proyecto\file_example_AVI_1920_2_3MG.avi)
+}
