@@ -21,20 +21,27 @@ const newDoctor = async (req, res) => {
     }
 }
 
-const userInfo = async(req,res) => {
-    try{
-        const {email} = req.body;
-        const user = await getLoginInfo(email);
+const userInfo = async (req, res) => {
+    try {
+        const { email } = req.body; 
+        const user = await getLoginInfo(email);  
 
-        if (user){
-            return res.status(200).json({password: user.password, role: user.role});
-        } else {
-            return res.status(400).json({message: 'usuario no encontrado'});
+        if (!user) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
         }
-    }catch(error){
-        return res.status(500).json({error: error.message});
+        return res.status(200).json({
+            id: user.id,
+            name: user.name,
+            role: user.role,
+            password: user.password,
+            identification: user.identification,
+            ultrasoundHistory: user.ultrasoundHistory || []  
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Error en el servidor' });
     }
-}
+};
 
 const showPatients = async (req,res) => {
     try{
