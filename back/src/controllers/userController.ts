@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 9000;
 
 // Controller to get ultrasound history
 export const getUltrasoundHistory = async (req: Request, res: Response): Promise<any> => {
