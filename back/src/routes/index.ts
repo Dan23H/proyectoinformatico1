@@ -28,7 +28,7 @@ router.post('/crear-consulta',
      createConsulta
 )
 
-router.get('/crear-medico',
+router.post('/crear-medico',
      createDoc
 );
 
