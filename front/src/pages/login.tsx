@@ -40,7 +40,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    router.push('/home'); // Redirigir después del login
+    router.push('/homeDoctor'); // Redirigir después del login
   };
 
   return (
