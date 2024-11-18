@@ -1,7 +1,8 @@
 const createPatient = require ('../Functions/createPatient');
 const createDoctor = require ('../Functions/createDoctor');
 const getLoginInfo = require ('../Functions/LoginQuery');
-const getPatients =require ('../Functions/getPatients');
+const getPatients = require ('../Functions/getPatients');
+const getDoctors = require ('../Functions/getDoctors')
 
 const newPatient = async (req, res) => {
     try{
@@ -52,4 +53,13 @@ const showPatients = async (req,res) => {
     }
 }
 
-module.exports = {newPatient, newDoctor, userInfo, showPatients}
+const showDoctors = async (req,res) => {
+    try{
+        const doctors = await getDoctors();
+        return res.status(200).json(doctors);
+    }catch(error){
+        return res.status(500).json({error: error.message})
+    }
+}
+
+module.exports = {newPatient, newDoctor, userInfo, showPatients, showDoctors}

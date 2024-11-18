@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {newPatient,newDoctor,userInfo,showPatients} = require ('../Controllers/userController');
+const {newPatient,newDoctor,userInfo,showPatients,showDoctors} = require ('../Controllers/userController');
 
 //crear paciente
 router.post('/create-patient', newPatient);
@@ -13,5 +13,8 @@ router.post ('/login', userInfo);
 
 //llamar a todos los pacientes
 router.get('/patients', showPatients);
+
+//llamar a todos los doctores
+router.get('/doctors', showDoctors)
 
 module.exports = router;
