@@ -1,1 +1,1 @@
-npx index.js
+npx index.js || node index.js

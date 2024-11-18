@@ -1,43 +1,11 @@
-// import { useRouter } from 'next/router';
-// import { useState } from 'react';
-
-// export default function LoginPage() {
-//   const router = useRouter();
-//   const [username, setUsername] = useState('');
-//   const [password, setPassword] = useState('');
-
-//   const handleLogin = async () => {
-//     // Se llama al backend para autenticar
-//     router.push('/homeDoctor');
-//   };
-
-//   return (
-//     <div>
-//       <h1>Login</h1>
-//       <input 
-//         type="text" 
-//         placeholder="Username" 
-//         value={username} 
-//         onChange={(e) => setUsername(e.target.value)} 
-//       />
-//       <input 
-//         type="password" 
-//         placeholder="Password" 
-//         value={password} 
-//         onChange={(e) => setPassword(e.target.value)} 
-//       />
-//       <button onClick={handleLogin}>Login</button>
-//     </div>
-//   );
-// }
-
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { loginUser } from '../utils/loginUser';
 
-export default function LoginPage() {
-  const router = useRouter();
-  const [username, setUsername] = useState('');
+const Login = () => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async () => {
     router.push('/homeDoctor'); // Redirigir después del login
@@ -137,4 +105,6 @@ export default function LoginPage() {
       `}</style>
     </div>
   );
-}
+};
+
+export default Login;
