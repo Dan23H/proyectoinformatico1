@@ -1,6 +1,6 @@
 import express from 'express';
 import loginController from '../controllers/loginController';
-import { getUltrasoundHistory, getPatients, createPatientWithUltrasound, createConsulta, createDoc } from '../controllers/userController';
+import { getUltrasoundHistory, getPatients, getDoctors, createPatientWithUltrasound, createConsulta, createDoc } from '../controllers/userController';
 import { uploadMiddleware } from '../utils/videoConverter';
 
 const router = express.Router();
@@ -16,6 +16,10 @@ router.get('/historial-paciente',
 
 router.get('/obtener-pacientes',
      getPatients
+);
+
+router.get('/obtener-doctores',
+     getDoctors
 );
 
 router.post('/crear-paciente', 

@@ -1,13 +1,20 @@
-import express, { Application } from 'express';
-import dotenv from 'dotenv';
-import apiRoutes from './routes';
+import express from 'express';
+import cors from 'cors';
+import routes from './routes/index'; // Aquí están tus rutas
 
-dotenv.config();
+const app = express();
 
-const app: Application = express();
+// Configuración de CORS
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
 
+// Middlewares generales
 app.use(express.json());
 
-app.use('/api', apiRoutes);
+// Rutas
+app.use('/api', routes);
 
 export default app;

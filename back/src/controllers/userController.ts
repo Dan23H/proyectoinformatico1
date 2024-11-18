@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 9000;
 
 // Controller to get ultrasound history
 export const getUltrasoundHistory = async (req: Request, res: Response): Promise<any> => {
-  const { patientId } = req.body; // Assuming the patientId is sent in the body of the request
+  const { patientId } = req.query; // Assuming the patientId is sent in the query of the request
 
   if (!patientId) {
     return res.status(400).json({ error: "Patient ID is required" });
@@ -40,6 +40,20 @@ export const getPatients = async (req: Request, res: Response): Promise<any> => 
   } catch (error) {
     console.error(`Error fetching patiets:`, error);
     return res.status(500).json({ error: `Failed to fetch patients` });
+  }
+
+};
+
+export const getDoctors = async (req: Request, res: Response): Promise<any> => {
+  try {
+
+    const response = await axios.get(`http://localhost:${PORT}/api/doctors`);
+
+    return res.status(200).json(response.data);
+
+  } catch (error) {
+    console.error(`Error fetching patiets:`, error);
+    return res.status(500).json({ error: `Failed to fetch doctors` });
   }
 
 };
