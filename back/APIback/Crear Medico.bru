@@ -4,8 +4,17 @@ meta {
   seq: 7
 }
 
-get {
+post {
   url: http://localhost:5000/api/crear-medico
-  body: none
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "identification":"12345678910",
+    "name":"Daniel",
+    "email":"daniel@medicina.com",
+    "password":"1234"
+  }
 }

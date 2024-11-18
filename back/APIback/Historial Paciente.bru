@@ -5,13 +5,11 @@ meta {
 }
 
 get {
-  url: http://localhost:5000/api/historial-paciente
+  url: http://localhost:5000/api/historial-paciente?patientId=6735319e44fa79ecd23d5a02
   body: json
   auth: none
 }
 
-body:json {
-  {
-    "patientId":"67327c2f3343090bff41ff7b"
-  }
+params:query {
+  patientId: 6735319e44fa79ecd23d5a02
 }
