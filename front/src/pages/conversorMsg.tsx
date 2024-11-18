@@ -38,6 +38,7 @@ const ConversorMsg: React.FC = () => {
     <div className="conversor-container">
       <h2>Formulario de Conversión de Archivos</h2>
       <form onSubmit={handleConvert} className="form-container">
+        <center>
         <label>
           Nombre:
           <input
@@ -71,9 +72,10 @@ const ConversorMsg: React.FC = () => {
             onChange={handleFileChange}
             accept="video/*"
             required
-          />
+            />
         </label>
         <button type="submit" disabled={!archivo}>Convertir archivo</button>
+        </center>
       </form>
 
       <h3>Videos Convertidos:</h3>

@@ -1,20 +1,20 @@
-import React from 'react';
+import { useState } from 'react';
 
-interface PatientSearchProps {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-}
+const PatientSearch = ({ onSearch }: { onSearch: (query: string) => void }) => {
+  const [query, setQuery] = useState('');
 
-const PatientSearch: React.FC<PatientSearchProps> = ({ searchTerm, setSearchTerm }) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+    onSearch(e.target.value);
+  };
+
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="Buscar por nombre o cédula"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-    </div>
+    <input
+      type="text"
+      placeholder="Buscar paciente"
+      value={query}
+      onChange={handleInputChange}
+    />
   );
 };
 

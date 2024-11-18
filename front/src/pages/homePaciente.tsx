@@ -1,14 +1,63 @@
 import { useEffect, useState } from 'react';
 
+type HistoryItem = {
+  _id: string;
+  description: string;
+  videoUrl: string;
+  date: string; // Agregar un campo de fecha si no estaba considerado antes
+};
+
 const HomePaciente = () => {
-  const [data, setData] = useState(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [filteredHistory, setFilteredHistory] = useState<HistoryItem[]>([]);
+  const [error, setError] = useState('');
+  const [filterDate, setFilterDate] = useState('');
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/historial-paciente`)
-      .then((res) => res.json())
-      .then((data) => setData(data))
-      .catch((err) => console.error('Failed to load data:', err));
+    const fetchPatientHistory = async () => {
+      const patientId = localStorage.getItem('patientId'); // Recupera el patientId del localStorage
+
+      if (!patientId) {
+        setError('No se encontró el ID del paciente.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/historial-paciente?patientId=${patientId}`, {
+          method: 'GET',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Historial del paciente:', data);
+          setHistory(data.data); // Asume que los datos relevantes están en `data.data`
+          setFilteredHistory(data.data); // Inicialmente, muestra todos los datos
+        } else {
+          console.error('Error al obtener el historial del paciente');
+          setError('Error al obtener el historial del paciente.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        setError('Ocurrió un error al cargar el historial del paciente.');
+      }
+    };
+
+    fetchPatientHistory(); // Llama a la función dentro del useEffect
   }, []);
+
+  // Filtrar los datos cuando cambia la fecha
+  useEffect(() => {
+    if (!filterDate) {
+      // Si no hay filtro, mostrar todos los datos
+      setFilteredHistory(history);
+    } else {
+      // Filtrar los datos según la fecha seleccionada
+      const filtered = history.filter((item) =>
+        new Date(item.date).toISOString().split('T')[0] === filterDate
+      );
+      setFilteredHistory(filtered);
+    }
+  }, [filterDate, history]);
 
   return (
     <div className="home-paciente-container">
@@ -19,18 +68,17 @@ const HomePaciente = () => {
         type="date"
         id="filter-date"
         value={filterDate}
-        onChange={handleDateChange}
+        onChange={(e) => setFilterDate(e.target.value)} // Actualiza la fecha seleccionada
         className="date-input"
       />
       <div className="video-list">
-        {filteredVideos.length > 0 ? (
-          filteredVideos.map((video) => (
-            <div key={video.id} className="video-item">
-              <h3>{video.titulo}</h3>
-              <p><strong>Fecha:</strong> {video.fecha}</p>
-              <p>{video.descripcion}</p>
+        {filteredHistory.length > 0 ? (
+          filteredHistory.map((video) => (
+            <div key={video._id} className="video-item">
+              <h3>{video.description}</h3>
+              <p><strong>Fecha:</strong> {new Date(video.date).toLocaleDateString()}</p>
               <video width="100%" controls>
-                <source src={video.url} type="video/mp4" />
+                <source src={video.videoUrl} type="video/mp4" />
                 Tu navegador no soporta el elemento de video.
               </video>
             </div>

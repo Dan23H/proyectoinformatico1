@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const HomeDoctor = () => {
   const [data, setData] = useState(null);

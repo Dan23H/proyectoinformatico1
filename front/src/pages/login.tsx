@@ -1,14 +1,44 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { loginUser } from '../utils/loginUser';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState('');
+  const router = useRouter();
 
-  const handleLogin = async () => {
-    router.push('/homeDoctor'); // Redirigir después del login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === 'OK') {
+          localStorage.setItem('role', data.role); // Guardar el rol
+          if (data.role === 'patient') {
+            localStorage.setItem('patientId', data.id); // Guardar el ID del paciente
+            router.push('/homePaciente');
+          } else if (data.role === 'doctor') {
+            router.push('/homeDoctor');
+          }
+        } else {
+          setError('Credenciales inválidas');
+        }
+      } else {
+        setError('Credenciales inválidas');
+      }
+    } catch (error) {
+      setError('Error al intentar iniciar sesión');
+      console.error(error);
+    }
   };
 
   return (
@@ -16,9 +46,9 @@ const Login = () => {
       <h1>Login</h1>
       <input
         type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
       <input
         type="password"
