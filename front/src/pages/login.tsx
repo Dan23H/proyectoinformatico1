@@ -9,7 +9,7 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
@@ -18,16 +18,25 @@ const Login = () => {
         },
         body: JSON.stringify({ email, password }),
       });
+  
+      if (!response.ok) {
+        // Manejo de errores en caso de respuesta no exitosa
+        setError(`Error: ${response.status} - ${response.statusText}`);
+        return;
+      }
 
       if (response.ok) {
         const data = await response.json();
         if (data.status === 'OK') {
-          localStorage.setItem('role', data.role); // Guardar el rol
-          if (data.role === 'patient') {
-            localStorage.setItem('patientId', data.id); // Guardar el ID del paciente
-            router.push('/homePaciente');
-          } else if (data.role === 'doctor') {
-            router.push('/homeDoctor');
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('role', data.role); // Guardar el rol en localStorage
+            if (data.role === 'patient') {
+              localStorage.setItem('patientId', data.id); // Guardar el ID del paciente
+              router.push('/homePaciente');
+            } else if (data.role === 'doctor') {
+              localStorage.setItem('doctorId', data.id);
+              router.push('/homeDoctor');
+            }
           }
         } else {
           setError('Credenciales inválidas');
@@ -40,7 +49,7 @@ const Login = () => {
       console.error(error);
     }
   };
-
+  
   return (
     <div className="login-container">
       <h1>Login</h1>

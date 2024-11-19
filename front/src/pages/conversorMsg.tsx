@@ -1,50 +1,104 @@
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const ConversorMsg: React.FC = () => {
   const router = useRouter();
-  
-  const [nombre, setNombre] = useState('');
-  const [cedula, setCedula] = useState('');
-  const [descripcion, setDescripcion] = useState('');
+
+  const [nombre, setNombre] = useState("");
+  const [cedula, setCedula] = useState("");
+  const [email, setEmail] = useState("");
+  const [descripcion, setDescripcion] = useState("");
   const [archivo, setArchivo] = useState<File | null>(null);
   const [videos, setVideos] = useState<File[]>([]);
+  const [patient, setPatient] = useState<{ name: string; identification: string; email: string } | null>(null);
 
+  // Carga inicial: Verifica si hay un paciente seleccionado o nuevos datos
   useEffect(() => {
-    if (router.query.nombre) setNombre(router.query.nombre as string);
-    if (router.query.cedula) setCedula(router.query.cedula as string);
+    if (typeof window !== 'undefined') {
+      const storedPatient = localStorage.getItem("selectedPatient");
+      if (storedPatient) {
+        setPatient(JSON.parse(storedPatient));
+      } else {
+        setPatient(null);
+        setNombre("");
+        setCedula("");
+        setEmail("");
+      }
+
+      if (router.query.nombre) setNombre(router.query.nombre as string);
+      if (router.query.cedula) setCedula(router.query.cedula as string);
+      if (router.query.email) setEmail(router.query.email as string);
+    }
   }, [router.query]);
 
+  // Maneja cambios en el archivo
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setArchivo(e.target.files[0]);
     }
   };
 
-  const handleConvert = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (archivo) {
-      setVideos([...videos, archivo]);
-      setArchivo(null);
-    }
-  };
-
+  // Elimina un vídeo de la lista
   const handleDeleteVideo = (index: number) => {
     setVideos(videos.filter((_, i) => i !== index));
+  };
+
+  // Maneja la conversión/envío del formulario
+  const handleConvert = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (archivo) {
+      const apiUrl = patient
+        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/crear-consulta` // API para pacientes existentes
+        : `${process.env.NEXT_PUBLIC_BACKEND_URL}/crear-paciente`; // API para nuevos pacientes
+
+      const formData = new FormData();
+      formData.append("name", patient?.name || nombre);
+      formData.append("email", patient?.email || email); // Genera email si es nuevo paciente
+      formData.append("cedula", patient?.identification || cedula);
+      formData.append("doctorId", "ID_DEL_DOCTOR"); // Reemplazar con el ID real
+      formData.append("description", descripcion);
+      formData.append("video", archivo);
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.ok) {
+          console.log("Formulario enviado con éxito");
+          // Limpiar estado si es un nuevo paciente
+          if (!patient) {
+            localStorage.removeItem("selectedPatient");
+          }
+          setPatient(null);
+          setNombre("");
+          setCedula("");
+          setDescripcion("");
+          setArchivo(null);
+          setVideos([]);
+        } else {
+          console.error("Error al enviar el formulario");
+        }
+      } catch (error) {
+        console.error("Error en la petición:", error);
+      }
+    }
   };
 
   return (
     <div className="conversor-container">
       <h2>Formulario de Conversión de Archivos</h2>
       <form onSubmit={handleConvert} className="form-container">
-        <center>
         <label>
           Nombre:
           <input
             type="text"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            value={patient?.name || nombre}
+            onChange={(e) => !patient && setNombre(e.target.value)}
+            readOnly={!!patient}
             required
           />
         </label>
@@ -52,8 +106,19 @@ const ConversorMsg: React.FC = () => {
           Cédula:
           <input
             type="text"
-            value={cedula}
-            onChange={(e) => setCedula(e.target.value)}
+            value={patient?.identification || cedula}
+            onChange={(e) => !patient && setCedula(e.target.value)}
+            readOnly={!!patient}
+            required
+          />
+        </label>
+        <label>
+          Correo:
+          <input
+            type="text"
+            value={patient?.email || email}
+            onChange={(e) => !patient && setEmail(e.target.value)}
+            readOnly={!!patient}
             required
           />
         </label>
@@ -72,10 +137,11 @@ const ConversorMsg: React.FC = () => {
             onChange={handleFileChange}
             accept="video/*"
             required
-            />
+          />
         </label>
-        <button type="submit" disabled={!archivo}>Convertir archivo</button>
-        </center>
+        <button type="submit" disabled={!archivo}>
+          Convertir archivo
+        </button>
       </form>
 
       <h3>Videos Convertidos:</h3>
@@ -87,7 +153,7 @@ const ConversorMsg: React.FC = () => {
           </li>
         ))}
       </ul>
-      
+
       <div className="actions">
         <Link href="/homeDoctor">
           <button disabled={videos.length === 0}>Enviar</button>
@@ -126,7 +192,9 @@ const ConversorMsg: React.FC = () => {
           color: #555;
         }
 
-        input[type="text"], textarea, input[type="file"] {
+        input[type="text"],
+        textarea,
+        input[type="file"] {
           padding: 0.75rem;
           font-size: 1rem;
           border: 1px solid #ccc;
@@ -212,20 +280,6 @@ const ConversorMsg: React.FC = () => {
         .actions button:disabled {
           background-color: #ccc;
           cursor: not-allowed;
-        }
-
-        @media (max-width: 480px) {
-          .conversor-container {
-            padding: 1.5rem;
-          }
-
-          h2 {
-            font-size: 1.5rem;
-          }
-
-          input[type="text"], textarea, input[type="file"], .actions button {
-            font-size: 0.9rem;
-          }
         }
       `}</style>
     </div>

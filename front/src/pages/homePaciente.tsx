@@ -1,3 +1,4 @@
+import Navbar from '@/components/Navbar';
 import { useEffect, useState } from 'react';
 
 type HistoryItem = {
@@ -10,39 +11,44 @@ type HistoryItem = {
 const HomePaciente = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [filteredHistory, setFilteredHistory] = useState<HistoryItem[]>([]);
+  const [patientName, setPatientName] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [filterDate, setFilterDate] = useState('');
 
   useEffect(() => {
     const fetchPatientHistory = async () => {
-      const patientId = localStorage.getItem('patientId'); // Recupera el patientId del localStorage
+      if (typeof window !== 'undefined') {
+        const patientId = localStorage.getItem('patientId'); // Recupera el patientId del localStorage
 
-      if (!patientId) {
-        setError('No se encontró el ID del paciente.');
-        return;
-      }
-
-      try {
-        const response = await fetch(`http://localhost:5000/api/historial-paciente?patientId=${patientId}`, {
-          method: 'GET',
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Historial del paciente:', data);
-          setHistory(data.data); // Asume que los datos relevantes están en `data.data`
-          setFilteredHistory(data.data); // Inicialmente, muestra todos los datos
-        } else {
-          console.error('Error al obtener el historial del paciente');
-          setError('Error al obtener el historial del paciente.');
+        if (!patientId) {
+          setError('No se encontró el ID del paciente.');
+          return;
         }
-      } catch (error) {
-        console.error('Error:', error);
-        setError('Ocurrió un error al cargar el historial del paciente.');
-      }
-    };
 
-    fetchPatientHistory(); // Llama a la función dentro del useEffect
+        try {
+          const response = await fetch(`http://localhost:5000/api/historial-paciente?patientId=${patientId}`, {
+            method: 'GET',
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log('Historial del paciente:', data);
+            const patientName = data.data[0]?.patient?.name || 'Paciente Desconocido';
+            setPatientName(patientName);
+            setHistory(data.data);
+            setFilteredHistory(data.data);
+          } else {
+            console.error('Error al obtener el historial del paciente');
+            setError('Error al obtener el historial del paciente.');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          setError('Ocurrió un error al cargar el historial del paciente.');
+        }
+      };
+
+      fetchPatientHistory(); // Llama a la función dentro del useEffect
+    }
   }, []);
 
   // Filtrar los datos cuando cambia la fecha
@@ -61,7 +67,8 @@ const HomePaciente = () => {
 
   return (
     <div className="home-paciente-container">
-      <h1>Historial Médico</h1>
+      <Navbar title={`Bienvenid@, ${patientName}` || 'Cargando...'} subtitle={"Historial médico"} />
+      <hr />
       <p>Visualiza todos tus exámenes clínicos en video.</p>
       <label htmlFor="filter-date">Filtrar por fecha:</label>
       <input

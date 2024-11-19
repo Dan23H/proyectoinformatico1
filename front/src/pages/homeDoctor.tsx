@@ -1,112 +1,148 @@
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import Navbar from '../components/Navbar'; // Asegúrate de la ruta correcta
 
 const HomeDoctor = () => {
-  const [data, setData] = useState(null);
+  const [doctorName, setDoctorName] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`)
-      .then((res) => res.json())
-      .then(setData)
-      .catch((err) => console.error('Failed to load data:', err));
+    const fetchDoctorName = async () => {
+      const doctorId = localStorage.getItem('doctorId');
+      if (!doctorId) {
+        setDoctorName('Desconocido');
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/obtener-doctores`);
+        if (response.ok) {
+          const data = await response.json();
+          const doctor = data.find((doc: any) => doc._id === doctorId); // Busca el doctor por ID
+          setDoctorName(doctor ? doctor.name : 'Desconocido');
+        } else {
+          console.error('Error al obtener los doctores');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchDoctorName();
   }, []);
+
   return (
     <div className="home-doctor-container">
-      <h1>Panel del Doctor</h1>
-      <div className="button-container">
-        <Link href="/conversorMsg">
-          <button className="action-button">Añadir Nuevo Paciente</button>
+      <Navbar title={`Bienvenido, Dr. ${doctorName}` || 'Cargando...'} subtitle={"Panel del Doctor"} />
+      <div className="card-container">
+        <Link href="/conversorMsg" style={{ textDecoration: 'none' }}>
+          <div className="card">
+            <img
+              src="/icons/patient-add.svg"
+              alt="Añadir Paciente"
+              className="card-icon"
+            />
+            <h3>Añadir Nuevo Paciente</h3>
+            <p>Registre un paciente y envíe el resultado de la ecografía.</p>
+            <p> </p>
+          </div>
         </Link>
-        <Link href="/busquedaPacientes">
-          <button className="action-button">Buscar Paciente</button>
+        <Link href="/busquedaPacientes" style={{ textDecoration: 'none' }}>
+          <div className="card">
+            <img
+              src="/icons/patient-search.svg"
+              alt="Buscar Paciente"
+              className="card-icon"
+            />
+            <h3>Buscar Paciente</h3>
+            <p>
+              Encuentre pacientes registrados y envíe los nuevos resultados de la ecografía.
+            </p>
+          </div>
         </Link>
       </div>
-      <p className="note">*El médico no puede ver los videos, solo el recuento de los enviados.</p>
+      <p className='note'>*Solo podrá ver el recuento de los videos enviados.</p>
 
       <style jsx>{`
-        .home-doctor-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100vh;
-          padding: 1.5rem;
-          background-color: #f3f4f6;
-          color: #333;
-        }
+  .home-doctor-container {
+    display: flex;
+    margin-top: 10rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #f9fafb;
+    color: #333;
+  }
 
-        h1 {
-          font-size: 2rem;
-          margin-bottom: 2rem;
-          color: #0070f3;
-          text-align: center;
-        }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #0070f3;
+    text-align: center;
+  }
 
-        .button-container {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          width: 100%;
-          max-width: 300px;
-          margin-bottom: 1.5rem;
-        }
+  .note {
+    cursor: default;
+  }
 
-        .action-button {
-          width: 100%;
-          padding: 0.75rem;
-          font-size: 1rem;
-          color: #fff;
-          background-color: #0070f3;
-          border: none;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
-        }
+  .card-container {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 1200px;
+  }
 
-        .action-button:hover {
-          background-color: #005bb5;
-        }
+  .card {
+    flex: 1 1 250px;
+    max-width: 300px;
+    padding: 1.5rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+  }
 
-        .note {
-          font-size: 0.875rem;
-          color: #555;
-          text-align: center;
-          max-width: 300px;
-          line-height: 1.4;
-        }
+  .card:hover {
+    transform: scale(1.02);
+    border-color: #0070f3;
+  }
 
-        /* Estilos responsive */
-        @media (max-width: 768px) {
-          h1 {
-            font-size: 1.8rem;
-          }
+  .card-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 1rem;
+  }
 
-          .action-button {
-            padding: 0.6rem;
-            font-size: 0.9rem;
-          }
+  .card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #0070f3;
+  }
 
-          .note {
-            font-size: 0.8rem;
-          }
-        }
+  .card p {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.5;
+  }
 
-        @media (max-width: 480px) {
-          h1 {
-            font-size: 1.6rem;
-          }
+  @media (max-width: 768px) {
+    .card-container {
+      gap: 1rem; /* Reduce el espacio entre tarjetas en pantallas más pequeñas */
+    }
 
-          .action-button {
-            padding: 0.5rem;
-            font-size: 0.85rem;
-          }
+    .card {
+      max-width: 100%; /* Asegura que las tarjetas ocupen el ancho disponible */
+    }
+  }
+`}</style>
 
-          .note {
-            font-size: 0.75rem;
-          }
-        }
-      `}</style>
     </div>
+
   );
 };
 
