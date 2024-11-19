@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import fs from 'fs';
 import FormData from 'form-data';
 import { convertVideo } from '../utils/videoConverter';
@@ -46,40 +46,51 @@ export const getPatients = async (req: Request, res: Response): Promise<any> => 
 
 export const getDoctors = async (req: Request, res: Response): Promise<any> => {
   try {
-
     const response = await axios.get(`http://localhost:${PORT}/api/doctors`);
 
+    if (!response.data || response.data.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron doctores.' });
+    }
+
     return res.status(200).json(response.data);
-
   } catch (error) {
-    console.error(`Error fetching patiets:`, error);
-    return res.status(500).json({ error: `Failed to fetch doctors` });
+    console.error(`Error al obtener los doctores:`, error);
+    return res.status(500).json({ error: `Fallo al obtener los doctores` });
   }
-
 };
 
-export const createDoc = async (req: Request, res: Response): Promise<any> => {
-  const {nombre,email,pass,id} = req.body;
+export const createDoc = async (req: Request, res: Response): Promise<void> => {
   try {
+    const { name, email, password, identification } = req.body;
 
-    const response = await axios.post(`http://localhost:${PORT}/api/create-patient`, {
-      name:nombre,
-      email:email,
-      password: pass,
-      identification:id
-  });
+    // Validar que todos los campos están presentes
+    if (!name || !email || !password || !identification) {
+      res.status(400).json({ error: 'Todos los campos son obligatorios.' });
+      return;
+    }
 
-    return res.status(200).json(response.data);
+    // Enviar los datos completos con Axios
+    const response = await axios.post('http://localhost:9000/api/create-doctor', {
+      name,
+      email,
+      password,
+      identification,
+    });
 
+    res.status(201).json({ success: true, data: response.data });
   } catch (error) {
-    console.error(`Error creando el medico: `, error);
-    return res.status(500).json({ error: `Fallo la creacion del medico` });
+    if (error instanceof AxiosError) {
+      console.error('Error en Axios:', error.response?.data || error.message);
+      res.status(error.response?.status || 500).json({ error: error.response?.data || 'Error al crear el doctor' });
+    } else {
+      console.error('Error desconocido:', error);
+      res.status(500).json({ error: 'Error desconocido al crear el doctor.' });
+    }
   }
-
 };
 
 export const createConsulta = async (req: Request, res: Response): Promise<any> =>{
-  const { email,patientId, doctorId, description } = req.body;
+  const { email, patientId, doctorId, description } = req.body;
   const videoFile = req.file; // Access the uploaded AVI video file from the request
   const subject = "Video Ecografía4D";
 

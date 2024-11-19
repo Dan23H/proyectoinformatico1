@@ -6,4 +6,4 @@ const DoctorSchema = new mongoose.Schema({
     password: {type:"String", required:true},
     identification: {type:"String", required:true}
 });
-module.exports = mongoose.model('doctor', DoctorSchema);
+module.exports = mongoose.model('Doctor', DoctorSchema);

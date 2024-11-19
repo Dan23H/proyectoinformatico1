@@ -13,12 +13,20 @@ const newPatient = async (req, res) => {
     }
 }
 
-const newDoctor = async (req, res) => {
-    try{
-        const doctor = await createDoctor(req.body);
-        return res.status(201).json({success: true , data: doctor});
-    } catch(error){
-        return res.status(500).json({error: error.message});
+const newDoctor = async (req, res, next) => {
+    const { name, email, password, identification } = req.body;
+
+    // Verifica que todos los campos requeridos estén presentes
+    if (!name || !email || !password || !identification) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
+    }
+
+    try {
+        const doctor = await createDoctor({ name, email, password, identification });
+        res.status(201).json({ status: 'ok', doctor });
+    } catch (error) {
+        console.error('Error al crear el doctor:', error.message);
+        res.status(500).json({ error: 'Error al crear el doctor.' });
     }
 }
 
@@ -61,5 +69,6 @@ const showDoctors = async (req,res) => {
         return res.status(500).json({error: error.message})
     }
 }
+
 
 module.exports = {newPatient, newDoctor, userInfo, showPatients, showDoctors}

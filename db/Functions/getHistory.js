@@ -1,4 +1,6 @@
 const Ultrasound = require('../models/ultrasounds');
+require('../models/doctor');
+require('../models/patient');
 
 //ver el historial de ultrasonidos de los paicientes
 const getUltrasoundHistory = async (patientId) => {
